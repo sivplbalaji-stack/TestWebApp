@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TestWebApp.Data;
+using TestWebApp.DataAccess.Data;
 using TestWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);

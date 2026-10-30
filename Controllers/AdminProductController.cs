@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TestWebApp.Data;
+using TestWebApp.DataAccess.Data;
 using TestWebApp.Models;
 
 namespace TestWebApp.Controllers

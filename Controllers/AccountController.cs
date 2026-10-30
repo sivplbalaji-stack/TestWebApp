@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TestWebApp.Data;
-using TestWebApp.ViewModel;
+using TestWebApp.DataAccess.Data;
+using TestWebApp.Models.ViewModel;
 
 namespace TestWebApp.Controllers
 {

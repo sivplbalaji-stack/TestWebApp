@@ -16,4 +16,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TestWebApp.DataAccess\TestWebApp.DataAccess.csproj" />
+    <ProjectReference Include="..\TestWebApp.Models\TestWebApp.Models.csproj" />
+    <ProjectReference Include="..\TestWebApp.Utility\TestWebApp.Utility.csproj" />
+  </ItemGroup>
+
 </Project>

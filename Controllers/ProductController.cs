@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using TestWebApp.Data;
+using TestWebApp.DataAccess.Data;
 using TestWebApp.Models;
+using TestWebApp.Utility;
 
 namespace TestWebApp.Controllers
 {
@@ -51,7 +52,7 @@ namespace TestWebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
-
+            TempData["Success"] = "Product added to cart successfully!";
             //var product = await _context.Products.FindAsync(cartItem.ProductId);
             //if (product == null)
             //{
