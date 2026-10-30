@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TestWebApp.Data;
 using TestWebApp.Models;
 
 namespace TestWebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminProductController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,7 +19,8 @@ namespace TestWebApp.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var items = _context.Products.ToList();
+            return View(items);
         }
 
         public IActionResult Create()
@@ -28,6 +31,11 @@ namespace TestWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Product product)
         {
+            if (product.Name.Trim().ToLower().Equals("test"))
+            {
+                ModelState.AddModelError("Name", "The product name 'Test' is not allowed.");
+            }
+
             if (product.ImageFile != null && product.ImageFile.Length > 0)
             {
                 //Get the web root path from environment to save the uploaded image
@@ -61,36 +69,77 @@ namespace TestWebApp.Controllers
                 string confirmationFilePath = Path.Combine(webRootPath, product.ImagePath.TrimStart('/'));
                 if (!System.IO.File.Exists(confirmationFilePath))
                 {
-                    //ModelState.AddModelError("ImageFile", "Failed to save the image. Please try again.");
-                    //return View(product);
-
-                    throw new FileNotFoundException($"The image file was not found at the expected path: {confirmationFilePath}");
-                }
-
-                if (product.Name.Trim().Equals("Test"))
-                {
-                    ModelState.AddModelError("Name", "The product name 'Test' is not allowed.");
-                }
-
-                if (ModelState.IsValid)
-                {
-                    _context.Products.Add(product);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Index");
-                }
-                else
-                {
+                    ModelState.AddModelError("ImageFile", "Failed to save the image. Please try again.");
                     return View(product);
                 }
+            }
+            else
+            {
+                ModelState.AddModelError("ImageFile", "An image file is required.");
             }
 
             if (ModelState.IsValid)
             {
                 _context.Products.Add(product);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View();
+            else
+            {
+                return View(product);
+            }
+        }
+
+        [HttpGet("Edit/{Id}")]
+        public async Task<IActionResult> Edit(int Id)
+        {
+            if (Id == 0) return View();
+
+            var item = await _context.Products.FindAsync(Id);
+            return View(item);
+        }
+
+        [HttpPost("Edit/{Id}")]
+        public async Task<IActionResult> Edit(Product product)
+        {
+            if (product.Id == 0) return View();
+
+            var item = await _context.Products.FindAsync(product.Id);
+            if (item != null)
+            {
+                item.Name = product.Name;
+                item.Description = product.Description;
+                item.Price = product.Price;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(item);
+            }
+        }
+
+        public IActionResult Delete(int Id)
+        {
+            if (Id == 0) return View();
+
+            var item = _context.Products.FindAsync(Id);
+            return View(item);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Product product)
+        {
+            if (product.Id == 0) return View();
+
+            var item = await _context.Products.FindAsync(product.Id);
+            if (item != null)
+            {
+                _context.Products.Remove(item);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(item);
         }
     }
 }

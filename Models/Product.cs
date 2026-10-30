@@ -13,7 +13,7 @@ namespace TestWebApp.Models
         public string Description { get; set; } = null!;
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than zero.")]
         public decimal Price { get; set; }
-        public string ImagePath { get; set; } = null!;
+        public string? ImagePath { get; set; }
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
         public DateTime CreatedAt { get; set; }
